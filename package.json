@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nathanielslong/nathanielslong.github.io/issues"
   },
-  "homepage": "https://github.com/nathanielslong/nathanielslong.github.io#readme"
+  "homepage": "https://github.com/nathanielslong/nathanielslong.github.io#readme",
+  "dependencies": {
+    "mithril": "^1.1.5"
+  }
 }
