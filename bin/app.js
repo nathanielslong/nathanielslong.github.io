@@ -96,8 +96,12 @@ module.exports = g;
 
 var m = __webpack_require__(2);
 var UserList = __webpack_require__(6);
+var UserForm = __webpack_require__(8);
 
-m.mount(document.body, UserList);
+m.route(document.body, "/list", {
+  "/list": UserList,
+  "/edit/:id": UserForm
+});
 
 
 /***/ }),
@@ -1802,7 +1806,8 @@ module.exports = {
   oninit: User.loadList,
   view: function() {
     return m(".user-list", User.list.map(function(user) {
-      return m(".user-list-item", user.firstName + " " + user.lastName);
+      return m("a.user-list-item", {href: "/edit" + user.id,
+        oncreate: m.route.link}, user.firstName + " " + user.lastName);
     }));
   }
 }
@@ -1826,9 +1831,42 @@ var User = {
         User.list = result.data;
       })
   },
+
+  current: {},
+  load: function(id) {
+    return m.request({
+      method: "GET",
+      url: "https://rem-rest-api.herokuapp.com/api/users",
+      withCredentials: true,
+    })
+      .then(function(result) {
+        User.current = result;
+      })
+  }
 }
 
 module.exports = User;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var m = __webpack_require__(2);
+var User = __webpack_require__(7);
+
+module.exports = {
+  oninit: function(vnode) {User.load(vnode.attrs.id)},
+  view: function() {
+    return m("form", [
+      m("label.label", "First name"),
+      m("input.input[type=text][placeholder=First name]"),
+      m("label.label", "Last name"),
+      m("input.input[placeholder=Last name]"),
+      m("button.button[type=button]", "Save"),
+    ])
+  }
+}
 
 
 /***/ })
