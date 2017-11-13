@@ -95,20 +95,9 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 var m = __webpack_require__(2);
+var UserList = __webpack_require__(6);
 
-var root = document.body;
-var count = 0;
-
-var hello = {
-  view: function() {
-    return m("main", [
-      m("h1", {class: "title"}, "My first app"),
-      m("button", {onclick: function() {count++}}, count + " clicks")
-    ])
-  }
-}
-
-m.mount(root, hello);
+m.mount(document.body, UserList);
 
 
 /***/ }),
@@ -1800,6 +1789,46 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var m = __webpack_require__(2);
+var User = __webpack_require__(7);
+
+module.exports = {
+  oninit: User.loadList,
+  view: function() {
+    return m(".user-list", User.list.map(function(user) {
+      return m(".user-list-item", user.firstName + " " + user.lastName);
+    }));
+  }
+}
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var m = __webpack_require__(2);
+
+var User = {
+  list: [],
+  loadList: function() {
+    return m.request({
+      method: "GET",
+      url: "https://rem-rest-api.herokuapp.com/api/users",
+      withCredentials: true,
+    })
+      .then(function(result) {
+        User.list = result.data;
+      })
+  },
+}
+
+module.exports = User;
 
 
 /***/ })
